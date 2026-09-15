@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIFP Ciudad Jardín - Diagnóstico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .status {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+            border-left: 4px solid #ff6b6b;
+        }
+        .status.success {
+            border-left-color: #51cf66;
+        }
+        .status.pending {
+            border-left-color: #ffd93d;
+        }
+        h1 { color: #333; }
+        .data-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Diagnóstico del Catálogo Ciudad Jardín</h1>
+    
+    <div id="status-container"></div>
+    <div id="data-container"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://kyckwehxtyjggpsclxbc.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5Y2t3ZWh4dHlqZ2dwc2NseGJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0OTQ1NjcsImV4cCI6MjEwNTA3MDU2N30.PeEfgZ9tzeg03qiEJIpirayt6M1vB68umj3iRv-dMTQ';
+
+        const statusContainer = document.getElementById('status-container');
+        const dataContainer = document.getElementById('data-container');
+
+        function addStatus(title, message, type = 'pending') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `<strong>${title}:</strong> ${message}`;
+            statusContainer.appendChild(div);
+            return div;
+        }
+
+        async function test() {
+            try {
+                addStatus('✅ Página cargada', 'El script está ejecutándose correctamente', 'success');
+
+                // Test 1: Verify API key
+                addStatus('🔑 Verificando API Key', 'API Key está presente en el código', 'success');
+
+                // Test 2: Load levels
+                let statusDiv = addStatus('⏳ Cargando Niveles', `<span class="spinner">⟳</span>`);
+                const levelsResp = await fetch(`${SUPABASE_URL}/rest/v1/levels?order=id.asc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                
+                if (!levelsResp.ok) {
+                    statusDiv.className = 'status';
+                    statusDiv.innerHTML = `<strong>❌ Error en Niveles:</strong> ${levelsResp.status} ${levelsResp.statusText}`;
+                    return;
+                }
+                
+                const levels = await levelsResp.json();
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `<strong>✅ Niveles cargados:</strong> ${levels.length} registros`;
+
+                // Test 3: Load families
+                statusDiv = addStatus('⏳ Cargando Familias', `<span class="spinner">⟳</span>`);
+                const familiesResp = await fetch(`${SUPABASE_URL}/rest/v1/families?order=id.asc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                
+                if (!familiesResp.ok) {
+                    statusDiv.className = 'status';
+                    statusDiv.innerHTML = `<strong>❌ Error en Familias:</strong> ${familiesResp.status} ${familiesResp.statusText}`;
+                    return;
+                }
+                
+                const families = await familiesResp.json();
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `<strong>✅ Familias cargadas:</strong> ${families.length} registros`;
+
+                // Test 4: Load programs
+                statusDiv = addStatus('⏳ Cargando Programas', `<span class="spinner">⟳</span>`);
+                const programsResp = await fetch(`${SUPABASE_URL}/rest/v1/programs?order=code.asc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                
+                if (!programsResp.ok) {
+                    statusDiv.className = 'status';
+                    statusDiv.innerHTML = `<strong>❌ Error en Programas:</strong> ${programsResp.status} ${programsResp.statusText}`;
+                    return;
+                }
+                
+                const programs = await programsResp.json();
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `<strong>✅ Programas cargados:</strong> ${programs.length} registros`;
+
+                // Test 5: Load modules
+                statusDiv = addStatus('⏳ Cargando Módulos', `<span class="spinner">⟳</span>`);
+                const modulesResp = await fetch(`${SUPABASE_URL}/rest/v1/modules?order=id.asc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                
+                if (!modulesResp.ok) {
+                    statusDiv.className = 'status';
+                    statusDiv.innerHTML = `<strong>❌ Error en Módulos:</strong> ${modulesResp.status} ${modulesResp.statusText}`;
+                    return;
+                }
+                
+                const modules = await modulesResp.json();
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `<strong>✅ Módulos cargados:</strong> ${modules.length} registros`;
+
+                // Display data summary
+                const dataDiv = document.createElement('div');
+                dataDiv.className = 'data-section';
+                dataDiv.innerHTML = `
+                    <h2>📊 Resumen de Datos</h2>
+                    <pre>${JSON.stringify({
+                        niveles: levels.map(l => l.name_es),
+                        familias: families.map(f => f.name_es),
+                        programas: programs.map(p => p.code + ': ' + p.name_es),
+                        modulos_totales: modules.length
+                    }, null, 2)}</pre>
+                    
+                    <h2>✅ Todo funciona correctamente</h2>
+                    <p>El catálogo está completamente operativo. <strong>Intenta recargar la página principal con Cmd+Shift+R</strong></p>
+                    <p><a href="https://ainaramu-icjardin.github.io/ciudad-jardin-catalogo/" style="font-size: 1.2em; color: #0066cc;">👉 Ir al catálogo principal</a></p>
+                `;
+                dataContainer.appendChild(dataDiv);
+
+            } catch (error) {
+                addStatus('❌ Error', error.message);
+                const errorDiv = document.createElement('pre');
+                errorDiv.textContent = error.stack;
+                dataContainer.appendChild(errorDiv);
+            }
+        }
+
+        // Run tests
+        test();
+    </script>
+</body>
+</html>

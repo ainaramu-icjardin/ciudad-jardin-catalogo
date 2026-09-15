@@ -335,6 +335,139 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-strong);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--line);
+            background: linear-gradient(135deg, var(--navy) 0%, #0F223B 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .modal-header .program-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modal-header .program-code {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .close-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modules-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .modules-list li {
+            padding: 1rem;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+        }
+
+        .modules-list li:last-child {
+            border-bottom: none;
+        }
+
+        .modules-list li:before {
+            content: '▸';
+            margin-right: 1rem;
+            color: var(--navy);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .modules-list li:nth-child(odd) {
+            background-color: var(--paper);
+        }
+
+        .program-card {
+            cursor: pointer;
+        }
+
+        .program-card:active {
+            opacity: 0.9;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .container {
@@ -408,6 +541,25 @@
                     <div class="spinner"></div>
                     <p style="margin-top: 1rem;">Cargando programas...</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para módulos -->
+    <div id="modulesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="program-info">
+                    <span class="program-code" id="modalProgramCode"></span>
+                    <h2 id="modalProgramName"></h2>
+                </div>
+                <button class="close-btn" onclick="closeModalsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3 style="margin-top: 0; color: var(--navy);">Módulos del programa</h3>
+                <ul id="modulesList" class="modules-list">
+                    <!-- Los módulos se cargan dinámicamente aquí -->
+                </ul>
             </div>
         </div>
     </div>
@@ -595,7 +747,7 @@
                 const colorClass = familyColorMap[family?.name_es] || '';
 
                 return `
-                    <div class="program-card ${colorClass}">
+                    <div class="program-card ${colorClass}" onclick="openModulesModal('${program.id}', '${program.code}', '${program.name_es}')" style="cursor: pointer;">
                         <div class="program-header">
                             <div class="program-code">${program.code}</div>
                             <div class="program-title">${program.name_es}</div>
@@ -608,15 +760,64 @@
                             </div>
                             <div class="program-modules">
                                 <strong>${moduleCount} módulos</strong>
-                                ${moduleCount > 0 ? `<br><small>${modules.slice(0, 2).map(m => m.name_es).join(', ')}${moduleCount > 2 ? '...' : ''}</small>` : ''}
+                                ${moduleCount > 0 ? `<br><small style="cursor: pointer; color: var(--navy);">👉 Haz clic para ver módulos</small>` : '<br><small>Sin módulos</small>'}
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
 
+            // Agregar event listeners a las tarjetas
+            document.querySelectorAll('.program-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // No hacer nada si ya lo manejó el atributo onclick
+                });
+            });
+
             resultCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'programa' : 'programas'}`;
         }
+
+        // Modal Functions
+        function openModulesModal(programId, programCode, programName) {
+            const modules = programModules[programId] || [];
+            const modalContent = document.getElementById('modulesList');
+            const modal = document.getElementById('modulesModal');
+
+            document.getElementById('modalProgramCode').textContent = programCode;
+            document.getElementById('modalProgramName').textContent = programName;
+
+            if (modules.length === 0) {
+                modalContent.innerHTML = '<li style="padding: 2rem; text-align: center; color: var(--muted);">No hay módulos registrados para este programa.</li>';
+            } else {
+                modalContent.innerHTML = modules.map(module => `
+                    <li>${module.name_es}</li>
+                `).join('');
+            }
+
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalsModal() {
+            const modal = document.getElementById('modulesModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('modulesModal');
+            if (event.target === modal) {
+                closeModalsModal();
+            }
+        });
+
+        // Cerrar modal con tecla Escape
+        window.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModalsModal();
+            }
+        });
 
         // Start
         init();

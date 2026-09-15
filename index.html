@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIFP Ciudad Jardín LHII - Catálogo de Programas</title>
+    <style>
+        :root {
+            /* Brand Colors */
+            --burgundy: #7A1020;
+            --navy: #003A70;
+            --ink: #111827;
+            --muted: #4B5563;
+            --line: rgba(17, 24, 39, 0.14);
+            
+            /* Surface Colors */
+            --paper: #FBFCFE;
+            --paper-2: #F0F4F8;
+            --paper-3: #E8EEF5;
+            --paper-blue: #EDF4FB;
+            --paper-burgundy: #F8EEF1;
+            
+            /* Family Colors */
+            --family-informatica: #0F766E;
+            --family-administracion: #7E22CE;
+            --family-comercio: #C2410C;
+            --family-transporte: #15803D;
+            
+            /* Effects */
+            --shadow-light: 0 12px 28px rgba(8, 33, 63, 0.08);
+            --shadow-strong: 0 18px 42px rgba(8, 33, 63, 0.13);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: 'Source Sans 3 Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--ink);
+            background-color: var(--paper);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Archivo Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.3;
+        }
+
+        code, .monospace {
+            font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--navy) 0%, #0F223B 100%);
+            color: white;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-strong);
+            border-radius: 12px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--line);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .filter-group select {
+            padding: 0.75rem;
+            border: 2px solid var(--line);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--ink);
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group select:hover {
+            border-color: var(--navy);
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--burgundy);
+            background-color: var(--paper-burgundy);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background-color: var(--navy);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--burgundy);
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn-secondary {
+            background-color: var(--paper-2);
+            color: var(--ink);
+            border: 1px solid var(--line);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--paper-3);
+        }
+
+        /* Programs Grid */
+        .programs-section {
+            margin-bottom: 2rem;
+        }
+
+        .programs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .programs-header h2 {
+            color: var(--navy);
+            font-size: 1.5rem;
+        }
+
+        .result-count {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .program-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            border-left: 4px solid var(--navy);
+            transition: all 0.3s;
+        }
+
+        .program-card:hover {
+            box-shadow: var(--shadow-strong);
+            transform: translateY(-4px);
+        }
+
+        .program-card.family-informatica {
+            border-left-color: var(--family-informatica);
+        }
+
+        .program-card.family-administracion {
+            border-left-color: var(--family-administracion);
+        }
+
+        .program-card.family-comercio {
+            border-left-color: var(--family-comercio);
+        }
+
+        .program-card.family-transporte {
+            border-left-color: var(--family-transporte);
+        }
+
+        .program-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .program-code {
+            display: inline-block;
+            background-color: var(--paper-blue);
+            color: var(--navy);
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .program-title {
+            font-size: 1.2rem;
+            color: var(--ink);
+            margin-bottom: 0.25rem;
+        }
+
+        .program-title-eu {
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .program-body {
+            padding: 1.5rem;
+        }
+
+        .program-level {
+            display: inline-block;
+            background-color: var(--paper-2);
+            color: var(--muted);
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .program-family {
+            display: inline-block;
+            background-color: var(--paper-burgundy);
+            color: var(--burgundy);
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .program-modules {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .program-modules strong {
+            color: var(--ink);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: white;
+            border-radius: 12px;
+            border: 2px dashed var(--line);
+        }
+
+        .empty-state h3 {
+            color: var(--navy);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: var(--muted);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+            border-top: 1px solid var(--line);
+            margin-top: 3rem;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--navy);
+            border-top-color: var(--burgundy);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 2rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .programs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📚 CIFP Ciudad Jardín LHII</h1>
+            <p>Catálogo de Programas Formativos • Katalogoa Formatiboak</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="level-filter">Nivel de Formación</label>
+                    <select id="level-filter">
+                        <option value="">— Todos los niveles —</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="family-filter">Familia Profesional</label>
+                    <select id="family-filter">
+                        <option value="">— Todas las familias —</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-primary" onclick="applyFilters()">🔍 Filtrar</button>
+                <button class="btn btn-secondary" onclick="resetFilters()">↺ Limpiar Filtros</button>
+            </div>
+        </div>
+
+        <!-- Programs Section -->
+        <div class="programs-section">
+            <div class="programs-header">
+                <h2>Programas Disponibles</h2>
+                <div class="result-count" id="result-count">Cargando...</div>
+            </div>
+            <div id="programs-container" class="programs-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 1rem;">Cargando programas...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Datos actualizados • 160 registros en total</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Conectado a Supabase Cloud ✓</p>
+    </div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://kyckwehxtyjggpsclxbc.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5Y2t3ZWh4dHlqZ2dwc2NseGJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTUxNDc2NzksImV4cCI6MTczMDgzNzY3OX0.s5m8ey7Vax34Auj5S2YpqQfmUiqPzYnNsRjJK7h7P-8';
+
+        // Family Color Mapping
+        const familyColorMap = {
+            'Informática y Comunicaciones': 'family-informatica',
+            'Administración y Gestión': 'family-administracion',
+            'Comercio y Marketing': 'family-comercio',
+            'Transporte y Logística': 'family-transporte'
+        };
+
+        // Global Data
+        let allPrograms = [];
+        let allLevels = [];
+        let allFamilies = [];
+        let programModules = {};
+
+        // Initialize
+        async function init() {
+            await loadLevels();
+            await loadFamilies();
+            await loadPrograms();
+            await loadModules();
+            await displayPrograms();
+        }
+
+        // Fetch Levels
+        async function loadLevels() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/levels?order=id.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    }
+                );
+                allLevels = await response.json();
+                populateLevelFilter();
+            } catch (error) {
+                console.error('Error loading levels:', error);
+            }
+        }
+
+        // Fetch Families
+        async function loadFamilies() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/families?order=id.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    }
+                );
+                allFamilies = await response.json();
+                populateFamilyFilter();
+            } catch (error) {
+                console.error('Error loading families:', error);
+            }
+        }
+
+        // Fetch Programs
+        async function loadPrograms() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/programs?order=code.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    }
+                );
+                allPrograms = await response.json();
+            } catch (error) {
+                console.error('Error loading programs:', error);
+            }
+        }
+
+        // Fetch Modules
+        async function loadModules() {
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/modules?select=program_id,name_es,order=program_id.asc,order_index.asc`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    }
+                );
+                const modules = await response.json();
+                modules.forEach(mod => {
+                    if (!programModules[mod.program_id]) {
+                        programModules[mod.program_id] = [];
+                    }
+                    programModules[mod.program_id].push(mod);
+                });
+            } catch (error) {
+                console.error('Error loading modules:', error);
+            }
+        }
+
+        // Populate Level Filter
+        function populateLevelFilter() {
+            const select = document.getElementById('level-filter');
+            allLevels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level.id;
+                option.textContent = level.name_es;
+                select.appendChild(option);
+            });
+        }
+
+        // Populate Family Filter
+        function populateFamilyFilter() {
+            const select = document.getElementById('family-filter');
+            allFamilies.forEach(family => {
+                const option = document.createElement('option');
+                option.value = family.id;
+                option.textContent = family.name_es;
+                select.appendChild(option);
+            });
+        }
+
+        // Apply Filters
+        async function applyFilters() {
+            await displayPrograms();
+        }
+
+        // Reset Filters
+        function resetFilters() {
+            document.getElementById('level-filter').value = '';
+            document.getElementById('family-filter').value = '';
+            displayPrograms();
+        }
+
+        // Display Programs
+        async function displayPrograms() {
+            const levelId = document.getElementById('level-filter').value;
+            const familyId = document.getElementById('family-filter').value;
+
+            let filtered = allPrograms;
+
+            if (levelId) {
+                filtered = filtered.filter(p => p.level_id === levelId);
+            }
+            if (familyId) {
+                filtered = filtered.filter(p => p.family_id === familyId);
+            }
+
+            const container = document.getElementById('programs-container');
+            const resultCount = document.getElementById('result-count');
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <h3>No se encontraron programas</h3>
+                        <p>Prueba con otros filtros</p>
+                    </div>
+                `;
+                resultCount.textContent = '0 resultados';
+                return;
+            }
+
+            container.innerHTML = filtered.map(program => {
+                const level = allLevels.find(l => l.id === program.level_id);
+                const family = allFamilies.find(f => f.id === program.family_id);
+                const modules = programModules[program.id] || [];
+                const moduleCount = modules.length;
+                const colorClass = familyColorMap[family?.name_es] || '';
+
+                return `
+                    <div class="program-card ${colorClass}">
+                        <div class="program-header">
+                            <div class="program-code">${program.code}</div>
+                            <div class="program-title">${program.name_es}</div>
+                            <div class="program-title-eu">${program.name_eu || ''}</div>
+                        </div>
+                        <div class="program-body">
+                            <div>
+                                <span class="program-level">${level?.name_es || ''}</span>
+                                <span class="program-family">${family?.name_es || ''}</span>
+                            </div>
+                            <div class="program-modules">
+                                <strong>${moduleCount} módulos</strong>
+                                ${moduleCount > 0 ? `<br><small>${modules.slice(0, 2).map(m => m.name_es).join(', ')}${moduleCount > 2 ? '...' : ''}</small>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            resultCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'programa' : 'programas'}`;
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

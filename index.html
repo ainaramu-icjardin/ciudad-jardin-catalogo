@@ -657,7 +657,7 @@
         async function loadModules() {
             try {
                 const response = await fetch(
-                    `${SUPABASE_URL}/rest/v1/modules?select=program_id,name_es,order=program_id.asc,order_index.asc`,
+                    `${SUPABASE_URL}/rest/v1/modules?select=program_id,name_es,order_index&order=program_id.asc,order_index.asc`,
                     {
                         headers: {
                             'apikey': SUPABASE_KEY,
